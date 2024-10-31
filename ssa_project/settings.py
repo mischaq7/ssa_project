@@ -25,14 +25,14 @@ SECRET_KEY = 'django-insecure-ilqvzvurf5-c_(o6du7cg81xj)t&x@pld3)q#zl0+u%4$wkq4$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+RECAPTCHA_SECRET_KEY = "6LeMRm4qAAAAAPslEmmSL7zQBpwLV-YHw0R99ytB"
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Application definition
 
 INSTALLED_APPS = [
     'users',
-   'chipin',
+    'chipin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

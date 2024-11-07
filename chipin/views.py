@@ -1,5 +1,3 @@
-
-
 from django.http import HttpResponse 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
@@ -12,8 +10,10 @@ from .forms import GroupCreationForm
 from .models import Group
 import urllib.parse
 
+@login_required
 def home(request):
-    return render(request, "chipin/home.html")
+    pending_invitations = Group.objects.filter(invited_users__email=request.user.email)
+    return render(request, "chipin/home.html", {'pending_invitations': pending_invitations})
 
 @login_required
 def create_group(request):

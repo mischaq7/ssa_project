@@ -13,7 +13,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 def save_user_profile(sender, instance, **kwargs):
     if hasattr(instance, 'profile'):  # Ensure profile exists before trying to save
         instance.profile.save()
-    
+
 
 def validate_unique_nickname(nickname, instance=None):
     if instance:

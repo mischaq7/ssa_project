@@ -29,6 +29,17 @@ def home(request):
     }
     return render(request, 'chipin/home.html', context)
 
+@login_required
+def create_group(request):
+    if request.method == 'POST':
+        form = GroupCreationForm(request.POST, user=request.user)
+        if form.is_valid():
+            group = form.save()
+            messages.success(request, f'Group "{group.name}" created successfully!')
+            return redirect('chipin:group_detail', group_id=group.id)
+    else:
+        form = GroupCreationForm(user=request.user)
+    return render(request, 'chipin/create_group.html', {'form': form})
 
 @login_required
 def group_detail(request, group_id, edit_comment_id=None):

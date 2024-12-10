@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 
+
 urlpatterns = [
    path("", views.home, name="home"),
    path('create_group/', views.create_group, name='create_group'),
@@ -22,5 +23,6 @@ urlpatterns = [
    path('group/<int:group_id>/event/<int:event_id>/leave/', views.leave_event, name='leave_event'),
    path('group/<int:group_id>/event/<int:event_id>/delete/', views.delete_event, name='delete_event'),
    path('create_group/', views.create_group, name='create_group'),
+   
 
 ]

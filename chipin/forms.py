@@ -8,15 +8,21 @@ class GroupCreationForm(forms.ModelForm):
         fields = ['name', 'description']  # Replace with relevant fields
 
 
-class CommentForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['content']
-        widgets = {
-            'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Enter your comment...'})
-        }
 
+class GroupCreationForm(forms.ModelForm):
+    class Meta:
+        model = Group
+        fields = ['name', 'description']  # Add other fields as needed
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)  # Retrieve the user from kwargs
+        super().__init__(*args, **kwargs)
+        if user:
+            # Set the user as a member of the group automatically
+            self.instance.admin = user  # Set the user as the group admin
+            self.fields['name'].initial = f"Group for {user.username}"  
     # Clean the content to sanitise input
+    
     def clean_content(self):
         content = self.cleaned_data.get('content')
         if "<script>" in content.lower():  # Prevent XSS by checking for script tags

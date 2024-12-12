@@ -8,13 +8,21 @@ from django.dispatch import receiver
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        Profile.objects.get_or_create(user=instance)  # Safely create the profile without duplicating
+        # Use instance.username as a fallback nickname if no nickname is set
+        Profile.objects.get_or_create(
+            user=instance,
+            defaults={"nickname": instance.username or f"user_{instance.pk}"}
+        )
 
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    if hasattr(instance, 'profile'):  # Ensure profile exists before trying to save
-        instance.profile.save()
+    if hasattr(instance, 'profile'):  # Ensure profile exists before saving
+        try:
+            instance.profile.save()
+        except ValidationError:
+            # Avoid crashing due to validation errors
+            pass
 
 
 def validate_unique_nickname(nickname, instance=None):
@@ -49,3 +57,17 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+# Automatically update the superuser's profile when saved
+@receiver(post_save, sender=User)
+def update_superuser_profile(sender, instance, **kwargs):
+    if instance.is_superuser:
+        # Check for an associated profile
+        profile = Profile.objects.filter(user=instance).first()
+        if profile:
+            print(f"Nickname: {profile.nickname}")
+            # Update the nickname if it's missing
+            if not profile.nickname:
+                profile.nickname = instance.username or "admin"
+                profile.save()

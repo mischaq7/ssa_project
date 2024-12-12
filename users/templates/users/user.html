@@ -3,10 +3,143 @@
 <html lang="en">
 <head>
     <title>Welcome Page</title>
-    <link rel="stylesheet" href="{% static 'chipin/styles.css' %}">
+    <!-- Add Google Fonts link for Abril Fatface -->
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Apply Abril Fatface font to the body */
+        body {
+            font-family: 'Abril Fatface', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header Section Styling */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 15px 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        /* Logo Styling */
+        .logo img {
+            width: 60px; /* Adjust size as needed */
+            height: 60px;
+        }
+
+        /* User Info Section Styling */
+        .user-info {
+            display: flex;
+            align-items: center;
+            font-size: 15px;
+            color: #333;
+            width: 100%;
+            justify-content: flex-end; /* Align logout button to the right */
+        }
+
+        /* User Info Text */
+        .user-info span {
+            margin-right: 12px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        /* Logout Button Styling */
+        .user-info button {
+            background-color: #4f8da2;
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            cursor: pointer;
+            border-radius: 50px;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Logout Button Hover Effect */
+        .user-info button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Container for the welcome message */
+        .welcome-container {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        /* Messages Styling */
+        .messages {
+            list-style-type: none;
+            padding: 0;
+            margin: 20px 0;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* Individual Message Item */
+        .messages li {
+            margin-bottom: 8px;
+            font-size: 14px;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Message Types */
+        .messages li.error {
+            color: #e74c3c;
+            background-color: #fce4e4;
+        }
+
+        .messages li.success {
+            color: #2ecc71;
+            background-color: #e8f5e9;
+        }
+
+        /* General Link Styling */
+        a {
+            color: #000000;
+            text-decoration: none;
+            padding: 6px;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            border: 2px solid #414141; /* Add border */
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 15px;
+        }
+
+        a:hover {
+            text-decoration: none;
+            color: #fff;
+            background-color: #007bff;
+        }
+
+        /* Page Content Styling */
+        h1 {
+            color: #333;
+            font-size: 36px;
+            margin-top: 20px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
+        <!-- Logo Section -->
+        <div class="logo">
+            <img src="{% static 'chipin/logo.jpg' %}" alt="Logo"> <!-- Replace with your logo file path -->
+        </div>
+        
+        <!-- User Info Section with Logout Button -->
         <div class="user-info">
             <span>{{ request.user.username }}</span>
             <form action="{% url 'users:logout' %}" method="post">
@@ -15,6 +148,8 @@
             </form>
         </div>
     </div>   
+
+    <!-- Display messages (e.g., success or error) -->
     {% if messages %}
         <ul class="messages">
         {% for message in messages %}
@@ -22,8 +157,12 @@
         {% endfor %}
         </ul>
     {% endif %}
-    <h1>Welcome, {{ request.user.first_name }}</h1>
-    <p>Username: {{ request.user.username }}</p>
-    <a href="{% url 'chipin:home' %}">ChipIn Homepage</a>
+
+    <!-- Welcome Container with User Info -->
+    <div class="welcome-container">
+        <h1>Welcome! {{ request.user.first_name }}</h1>
+        <p>Username: {{ request.user.username }}</p>
+        <a href="{% url 'chipin:home' %}">ChipIn Homepage</a>
+    </div>
 </body>
 </html>

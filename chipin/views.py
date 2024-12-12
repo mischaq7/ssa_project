@@ -6,16 +6,12 @@ from django.core.mail import send_mail
 from django.urls import reverse
 from django.conf import settings
 from django.contrib.auth.models import User
-from .forms import GroupCreationForm
-from .models import Group
-from .models import GroupJoinRequest
+from .forms import GroupCreationForm, CommentForm  # Consolidate form imports
+from .models import Group, GroupJoinRequest, Comment, Event  # Consolidate model imports
 import urllib.parse
-from .models import Group, Comment
-from .forms import CommentForm
-from .models import Event
 from django import forms
-from .models import Comment 
-from django.shortcuts import render, redirect
+
+
 
 
 def add_comment(request, group_id):
@@ -35,9 +31,9 @@ def add_comment(request, group_id):
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
-        fields = ['text']
+        fields = ['content']  # Use 'content' to match your model's field name
         widgets = {
-            'text': forms.Textarea(attrs={'placeholder': 'Write a comment...'}),
+            'content': forms.Textarea(attrs={'placeholder': 'Write a comment...'}),  # Correct field reference
         }
 
 def home(request):
@@ -289,28 +285,33 @@ def join_event(request, group_id, event_id):
 def update_event_status(request, group_id, event_id):
     group = get_object_or_404(Group, id=group_id)
     event = get_object_or_404(Event, id=event_id, group=group)
+    
     # Ensure that only the group admin can update the event status
     if request.user != group.admin:
         messages.error(request, "Only the group administrator can update the event status.")
         return redirect('chipin:group_detail', group_id=group.id)
+    
     # Calculate the share per member
     event_share = event.calculate_share()
+    
     # Check if all members can afford the event share
     sufficient_funds = True
     for member in group.members.all():
         if member.profile.max_spend < event_share:
             sufficient_funds = False
             break
+    
     # Update the event status based on the members' ability to cover the share
     if sufficient_funds:
-        event.status = "Active"
-        messages.success(request, f"The event '{event.name}' is now Active. All members can cover the cost.")
+        event.status = 'approved'  # Assuming 'approved' is one of the possible statuses
+        messages.success(request, f"The event '{event.name}' has been approved.")
     else:
-        event.status = "Pending"
-        messages.warning(request, f"The event '{event.name}' remains Pending. Some members cannot cover the cost.")
-    # Save the updated event status
-    event.save()
+        event.status = 'pending'  # Set the status to 'pending' if funds are insufficient
+        messages.warning(request, f"The event '{event.name}' is pending due to insufficient funds.")
+    
+    event.save()  # Save the updated event status
     return redirect('chipin:group_detail', group_id=group.id)
+
 
 @login_required
 def leave_event(request, group_id, event_id):

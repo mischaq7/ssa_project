@@ -1,16 +1,89 @@
 {% extends 'chipin/base.html' %}
 {% load static %}
 {% block title %}Login - ChipIn{% endblock %}
+
 {% block content %}
+    <style>
+        /* Google Fonts Import for Abril Fatface */
+        @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap');
+
+        /* Login Container Styling */
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Login Header Styling */
+        .login-header h2 {
+            text-align: center;
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+            font-family: 'Abril Fatface', cursive; /* Apply Abril Fatface font */
+        }
+
+        /* Form Group Styling */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        /* Input Styling */
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        /* Button Styling */
+        .form-button {
+            background-color:#337f99;
+            color: #fff;
+            border: none;
+            padding: 12px 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+            font-family: 'Abril Fatface', cursive; /* Apply Abril Fatface font */
+        }
+
+        /* Button Hover Effect */
+        .form-button:hover {
+            background-color: #a1c9d6;
+            transform: translateY(-2px);
+        }
+    </style>
+
     <div class="login-container">
+        <div class="login-header">
+            <h2>Login to ChipIn</h2>
+        </div>
         <form id="login-form" action="{% url 'users:login' %}" method="post" onsubmit="return executeRecaptcha();">
             {% csrf_token %}
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="hidden" name="recaptcha-token" id="recaptcha-token">
-            <button type="submit">Login</button>
+            <div class="form-group">
+                <input type="text" name="username" placeholder="Username" required class="form-input">
+            </div>
+            <div class="form-group">
+                <input type="password" name="password" placeholder="Password" required class="form-input">
+            </div>
+            <div class="form-group">
+                <input type="hidden" name="recaptcha-token" id="recaptcha-token">
+            </div>
+            <button type="submit" class="form-button">Login</button>
         </form>
     </div>
+
     <script src="https://www.google.com/recaptcha/api.js?render=6LeMRm4qAAAAADD-PhyZEaZz2nWI4DMYqeYw43uP"></script>
     <script>
         function executeRecaptcha() {

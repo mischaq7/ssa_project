@@ -1,18 +1,13 @@
 from django import forms
 from .models import Group, Comment
 
-
+# CommentForm with custom validation and widget
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content']  # Use 'content', which matches your model
-
-class CommentForm(forms.ModelForm):
-    class Meta:
-        model = Comment
-        fields = ['content']  # Correct field name from model
         widgets = {
-            'content': forms.Textarea(attrs={'placeholder': 'Write a comment...'}),  # Correct field reference
+            'content': forms.Textarea(attrs={'placeholder': 'Write a comment...'}),  # Add placeholder
         }
 
     def clean_content(self):
@@ -21,7 +16,7 @@ class CommentForm(forms.ModelForm):
             raise forms.ValidationError("Invalid content.")
         return content
 
-
+# GroupCreationForm for group creation
 class GroupCreationForm(forms.ModelForm):
     class Meta:
         model = Group

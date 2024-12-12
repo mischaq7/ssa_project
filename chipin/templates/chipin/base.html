@@ -3,27 +3,120 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ChipIn{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'chipin/styles.css' %}">
+    <!-- Add Google Fonts link for Abril Fatface -->
+    <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Abril Fatface font */
+        body {
+            font-family: 'Abril Fatface', sans-serif;
+        }
+
+        /* Logo Styling */
+        .logo img {
+            width: 100px;
+            height: 100px; /* Maintain aspect ratio */
+        }
+
+        /* Optional: Adjust header padding if logo size increases */
+        header {
+            padding: 10px 20px;
+        }
+
+        /* Navigation Styling */
+        nav.user-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Messages Styling */
+        .messages {
+            list-style-type: none;
+            margin: 20px 0;
+            padding: 0;
+        }
+
+        .messages li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .messages li.success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .messages li.error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .messages li.warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        /* Footer Styling */
+        footer {
+            padding: 20px 0;
+            text-align: center;
+            background-color: #f1f1f1;
+            color: #333;
+        }
+
+        /* Logout Button Styling */
+        .logout-btn {
+            background-color: #ff5c5c;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .logout-btn:hover {
+            background-color: #e04e4e;
+        }
+
+        /* Mobile-Friendly Adjustments */
+        @media (max-width: 768px) {
+            nav.user-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .logo img {
+                width: 80px;
+            }
+        }
+    </style>
 </head>
 <body>
     <header>
         <div class="logo">
-            <img src="{% static 'chipin/logo_90.jpg' %}" alt="ChipIn Logo">
+            <img src="{% static 'chipin/logo.jpg' %}" alt="ChipIn Logo">
         </div>
-        <div class="user-info">
+        <nav class="user-info">
             {% if request.user.is_authenticated %}
-            <a href="{% url 'chipin:home' %}">Home</a> <span>{{ request.user.profile.nickname }}</span>
-                <form action="{% url 'users:logout' %}" method="post">
+                <a href="{% url 'chipin:home' %}">Home</a>
+                <span>{{ request.user.profile.nickname }}</span>
+                <form action="{% url 'users:logout' %}" method="post" class="logout-form">
                     {% csrf_token %}
-                    <button type="submit">Logout</button>
+                    <button type="submit" class="logout-btn">Logout</button>
                 </form>
             {% else %}
-                <a href="{% url 'users:login' %}">Login</a> <a href="{% url 'users:register' %}">Register</a>
+                <a href="{% url 'users:login' %}" class="auth-link">Login</a>
+                <a href="{% url 'users:register' %}" class="auth-link">Register</a>
             {% endif %}
-        </div>
+        </nav>
     </header>
-    <!-- Messages block -->
+
+    <!-- Messages Block -->
     {% if messages %}
         <ul class="messages">
         {% for message in messages %}
@@ -31,12 +124,14 @@
         {% endfor %}
         </ul>
     {% endif %}
+
     <main>
         {% block content %}
         {% endblock %}
     </main>
+
     <footer>
-        <p>&copy; 2024 ChipIn</p>
+        <p>&copy; 2024 ChipIn. All rights reserved.</p>
     </footer>
 </body>
 </html>

@@ -1,23 +1,104 @@
 {% extends 'chipin/base.html' %}
 {% block content %}
-<h2>Create Event for {{ group.name }}</h2>
+    <style>
+        /* Google Fonts Import for Abril Fatface */
+        @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap');
 
-<form method="POST">
-    {% csrf_token %}
-    <div>
-        <label for="name">Event Name</label>
-        <input type="text" name="name" required>
-    </div>
-    <div>
-        <label for="date">Event Date</label>
-        <input type="date" name="date" required>
-    </div>
-    <div>
-        <label for="total_spend">Total Spend</label>
-        <input type="number" name="total_spend" step="1.00" required>
-    </div>
-    <button type="submit">Create Event</button>
-</form>
+        /* General Styling for Event Form */
+        .event-form-container {
+            max-width: 600px; /* Maximum width of the form */
+            margin: 0 auto; /* Centers the form */
+            padding: 30px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
 
-<a href="{% url 'chipin:group_detail' group.id %}">Back to Group</a>
+        /* Form Heading */
+        h2 {
+            font-family: 'Abril Fatface', cursive; /* Apply Abril Fatface font */
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Label Styling */
+        label {
+            display: block;
+            font-size: 16px;
+            font-weight: bold;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        /* Input Fields Styling */
+        input[type="text"], input[type="date"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Submit Button Styling */
+        button[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: background-color 0.3s ease;
+            font-family: 'Abril Fatface', cursive; /* Apply Abril Fatface font */
+        }
+
+        /* Button Hover Effect */
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        /* Back Link Styling */
+        a {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
+    <div class="event-form-container">
+        <h2>Create Event for {{ group.name }}</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div>
+                <label for="name">Event Name</label>
+                <input type="text" name="name" required>
+            </div>
+            <div>
+                <label for="date">Event Date</label>
+                <input type="date" name="date" required>
+            </div>
+            <div>
+                <label for="total_spend">Total Spend</label>
+                <input type="number" name="total_spend" step="1.00" required>
+            </div>
+            <button type="submit">Create Event</button>
+        </form>
+
+        <a href="{% url 'chipin:group_detail' group.id %}">Back to Group</a>
+    </div>
 {% endblock %}

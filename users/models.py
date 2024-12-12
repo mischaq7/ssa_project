@@ -5,7 +5,6 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
-
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -19,6 +18,9 @@ def save_user_profile(sender, instance, **kwargs):
 
 
 def validate_unique_nickname(nickname, instance=None):
+    if not nickname.strip():  # Check for empty or whitespace-only nicknames
+        raise ValidationError("Nickname cannot be blank.")
+    
     if instance:
         # Exclude the current instance from the uniqueness check
         if Profile.objects.filter(nickname=nickname).exclude(pk=instance.pk).exists():
@@ -26,6 +28,7 @@ def validate_unique_nickname(nickname, instance=None):
     else:
         if Profile.objects.filter(nickname=nickname).exists():
             raise ValidationError(f"Nickname '{nickname}' is already taken.")
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -39,8 +42,10 @@ class Profile(models.Model):
         validate_unique_nickname(self.nickname, instance=self)
 
     def save(self, *args, **kwargs):
+        if not self.nickname.strip():  # Ensure nickname is not blank before saving
+            raise ValidationError("Nickname cannot be blank.")
         self.clean()
-        super().save(*args, **kwargs)    
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.user.username

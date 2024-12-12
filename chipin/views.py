@@ -13,8 +13,33 @@ import urllib.parse
 from .models import Group, Comment
 from .forms import CommentForm
 from .models import Event
+from django import forms
+from .models import Comment 
+from django.shortcuts import render, redirect
 
-@login_required
+
+def add_comment(request, group_id):
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.user = request.user
+            comment.group_id = group_id  # Assuming you're passing a group_id
+            comment.save()
+            return redirect('group_detail', group_id=group_id)
+    else:
+        form = CommentForm()
+    return render(request, 'chipin/add_comment.html', {'form': form})
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['text']
+        widgets = {
+            'text': forms.Textarea(attrs={'placeholder': 'Write a comment...'}),
+        }
+
 def home(request):
     user = request.user
     pending_invitations = user.pending_invitations.all() # Get pending group invitations for the current user
@@ -115,6 +140,7 @@ def invite_users(request, group_id):
         'group': group,
         'users_not_in_group': users_not_in_group
     })
+
 
 @login_required
 def accept_invite(request, group_id):
@@ -237,25 +263,26 @@ def create_event(request, group_id):
         return redirect('chipin:group_detail', group_id=group.id)
     return render(request, 'chipin/create_event.html', {'group': group})
 
+
+
 @login_required
 def join_event(request, group_id, event_id):
     group = get_object_or_404(Group, id=group_id)
     event = get_object_or_404(Event, id=event_id, group=group)
     event_share = event.calculate_share()  
-    # Check if the user is eligible to join based on their max spend
+    
     if request.user.profile.max_spend < event_share:
-        messages.error(request, f"Your max spend of ${request.user.profile.max_spend} is too low to join this event.")
+        messages.error(request, "You cannot join this event because the share exceeds your maximum spending limit.")
         return redirect('chipin:group_detail', group_id=group.id)
+    
     # Check if the user has already joined the event
     if request.user in event.members.all():
         messages.info(request, "You have already joined this event.")
         return redirect('chipin:group_detail', group_id=group.id)
-    # Add the user to the event
-    event.members.add(request.user)   
-    messages.success(request, f"You have successfully joined the event '{event.name}'.")  
-    # Optionally, update the event status if needed
-    event.check_status()
-    event.save()
+    
+    # Add the user to the event's members
+    event.members.add(request.user)
+    messages.success(request, f"You have successfully joined the event '{event.name}'.")
     return redirect('chipin:group_detail', group_id=group.id)
 
 @login_required
